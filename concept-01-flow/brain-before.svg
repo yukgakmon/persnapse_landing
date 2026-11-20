@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" role="img" aria-labelledby="title desc">
+  <title id="title">상담 뒤에도 챙길 생각이 가득한 머릿속</title>
+  <desc id="desc">지난 상담, 다음 연락, 보낼 자료, 오늘 챙길 고객이 큰 영역을 차지하고 보험 영업 영역은 작게 남아 있다.</desc>
+  <style>
+    .head{fill:#fffcfb;stroke:#756775;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+    .region{stroke:#8e7c8b;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+    .label{fill:#5f5360;font:700 19px 'Noto Sans KR','Malgun Gothic',sans-serif;text-anchor:middle;letter-spacing:-.05em}
+    .sales{fill:#ead5ff;stroke:#7d35d9;stroke-width:3}
+    .sales-label{fill:#5d1f9f;font:900 18px 'Noto Sans KR','Malgun Gothic',sans-serif;text-anchor:middle;letter-spacing:-.05em}
+    .sketch{fill:none;stroke:#a99baa;stroke-width:1.7;stroke-linecap:round;opacity:.55}
+  </style>
+  <path class="head" d="M153 293c0-10 1-19-2-25-24-1-41-11-46-29-2-8-1-17 1-23l-20-3c-12-2-15-8-8-17l22-27c-9-30-2-60 18-84 30-37 82-49 141-46 69 3 124 32 147 86 18 42 9 91-20 126-11 13-14 27-13 42z"/>
+  <path class="sketch" d="M108 219c11 5 23 5 32-1m-31 21c12 5 24 5 34-2m-42-67c8 2 15 0 21-4"/>
+
+  <path class="region" fill="#f1e8e5" d="M132 101c-7-12 5-21 16-20 10-9 25-6 31 0 13-7 27-1 29 9 14 1 20 15 12 24 5 12-4 24-16 23-8 9-23 10-31 4-13 8-27 3-31-6-15 0-22-13-14-23-2-4 0-8 4-11z"/>
+  <text class="label" x="174" y="106"><tspan x="174">지난 상담</tspan><tspan x="174" dy="20">무슨 얘기?</tspan></text>
+
+  <path class="region" fill="#f3eae9" d="M236 94c-3-12 10-20 22-17 9-9 25-6 32 0 15-5 28 0 32 10 15-2 25 10 22 21 11 8 7 22-3 27 0 13-15 21-27 16-9 8-24 8-32 1-13 5-25-1-28-10-14 2-24-8-21-19-8-9-5-21 3-29z"/>
+  <text class="label" x="286" y="105"><tspan x="286">다음 연락</tspan><tspan x="286" dy="20">언제였지?</tspan></text>
+
+  <path class="region" fill="#eee9e8" d="M130 171c-7-10 2-19 12-19 9-10 25-8 31-1 13-5 25 0 28 10 14 1 19 13 13 22 6 10-2 21-13 22-6 10-20 13-29 7-12 7-25 2-29-7-13 0-21-11-16-21-5-5-4-10 3-13z"/>
+  <text class="label" x="170" y="179"><tspan x="170">보낼 자료</tspan><tspan x="170" dy="20">뭐였지?</tspan></text>
+
+  <path class="region sales" d="M226 175c-4-9 5-16 13-16 8-8 20-7 26-1 10-4 20 1 22 9 10 3 13 12 8 19 5 9-2 18-11 18-6 8-18 9-24 4-10 5-20 1-23-6-9 0-14-8-11-16-5-4-5-8 0-11z"/>
+  <text class="sales-label" x="260" y="181"><tspan x="260">보험</tspan><tspan x="260" dy="19">영업</tspan></text>
+
+  <path class="region" fill="#f3e9e8" d="M315 170c-3-10 7-17 17-17 8-7 19-6 25-1 12-3 20 3 20 12 10 4 12 14 5 21 4 10-4 18-13 18-6 8-17 10-24 5-10 5-19 0-22-8-10-2-13-10-9-18-4-4-3-8 1-12z"/>
+  <text class="label" x="347" y="178"><tspan x="347">오늘 누구</tspan><tspan x="347" dy="20">챙기지?</tspan></text>
+
+  <path class="sketch" d="M216 153c9 1 12 4 15 8m70-9c7 0 11 3 14 7m-87 48c-9 7-15 10-22 9m95-8c6 5 11 7 16 7"/>
+</svg>

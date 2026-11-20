@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5fc">
+  <meta name="description" content="새 고객을 챙기는 사이 다시 연락할 고객을 놓치는 상황에서 시작해, 만남의 맥락과 다음 행동을 연결하는 퍼스냅스 랜딩페이지 1안.">
+  <title>Persnapse — 다시 연락할 고객을 놓치지 않도록 | 랜딩페이지 1안</title>
+  <link rel="stylesheet" href="./styles.css?v=20261120-share-nav-1">
+  <script src="./app.js?v=20261119-early-reveal-2" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="퍼스냅스 시안 처음으로">Persnapse<span>.</span></a>
+    <span class="topbar-center">LANDING CONCEPT <b>01</b> <i></i> SCROLL STORY</span>
+    <a class="topbar-link" href="#scene-1">흐름 살펴보기 <span aria-hidden="true">↘</span></a>
+  </header>
+
+  <main class="story" id="story">
+    <svg class="thread" id="thread" aria-hidden="true" preserveAspectRatio="none">
+      <defs>
+        <filter id="thread-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="9"/></filter>
+        <linearGradient id="active-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b86aff"/><stop offset=".55" stop-color="#7223e9"/><stop offset="1" stop-color="#35b4c6"/></linearGradient>
+      </defs>
+      <path class="thread-base" id="thread-base"></path>
+      <path class="thread-halo" id="thread-halo"></path>
+      <path class="thread-active" id="thread-active"></path>
+      <g id="thread-branches"></g>
+      <circle class="pulse-halo" id="pulse-halo" r="18"></circle>
+      <circle class="pulse-core" id="pulse-core" r="6"></circle>
+      <circle class="branch-pulse" id="branch-pulse" r="5"></circle>
+    </svg>
+
+    <section class="hero" id="top" data-scene="0" aria-labelledby="hero-title">
+      <div class="hero-glow glow-left" aria-hidden="true"></div>
+      <div class="hero-glow glow-right" aria-hidden="true"></div>
+      <div class="hero-stage">
+        <div class="hero-intro reveal">
+          <span class="eyebrow"><span class="live-dot"></span> 보험설계사를 위한 퍼스냅스 · 가상 사용 흐름 시안</span>
+          <h1 id="hero-title">새 고객을 챙기는 사이,<br><em>다시 연락할 고객을<br>놓칩니다.</em></h1>
+          <p>제안서를 보낸 고객, 다음 달 다시 만나기로 한 고객.<br>대화는 흩어진 기록에, 다음 약속은 머릿속에 남습니다.</p>
+          <p class="hero-answer">흩어진 상담 기록을 모으면, 다음 연락할 고객과 일정이 보입니다.</p>
+        </div>
+
+        <figure class="brain-problem reveal">
+          <figcaption><span>INSIDE THE MIND</span><strong>상담이 끝난 뒤에도 남는 생각들</strong></figcaption>
+          <img class="problem-brain-image" src="./brain-before.svg" alt="머릿속 대부분을 지난 상담, 다음 연락, 보낼 자료, 오늘 챙길 고객이 차지하고 보험 영업 영역은 작게 남은 개념 그림">
+          <span class="brain-problem-foot">보험 영업에 쓸 생각의 자리가 좁아집니다</span>
+        </figure>
+      </div>
+      <div class="hero-tail"><small class="ratio-note">머릿속 영역의 크기는 실제 측정치가 아닌 시각적 비유입니다.</small><span class="anchor" id="anchor-0" aria-hidden="true"></span><span class="scroll-hint">SCROLL TO FOLLOW <b>↓</b></span></div>
+    </section>
+
+    <section class="story-intro"><span>ILLUSTRATIVE JOURNEY</span><p>다음 연락이 보이는 순간부터, 그 연결이 만들어지는 과정까지.</p><small>아래 상황은 애니메이션 검토를 위한 가상 예시입니다.</small></section>
+
+    <section class="chapter" id="scene-1" data-scene="1" aria-labelledby="scene-1-title">
+      <div class="chapter-copy reveal">
+        <div class="chapter-top"><span class="chapter-number">01 / 다시 챙길 고객</span><span class="chapter-time">WED · 09:12</span></div>
+        <p class="before-label">지금은</p><p class="before-action">“다음 주에 연락”을 기억에만 두거나 캘린더에 직접 적어둡니다.</p>
+        <h2 id="scene-1-title">다음 연락할 고객이,<br><em>일정에 다시 보입니다.</em></h2>
+        <p class="feature-copy">등록된 만남의 맥락을 바탕으로 다음 일정과 후속 할 일을 자동으로 생성해 캘린더에서 확인합니다.</p>
+        <span class="feature-tag">현재 페이지의 기능 · 개인 Pro</span>
+      </div>
+      <span class="anchor chapter-anchor" id="anchor-1" aria-hidden="true"></span>
+      <div class="chapter-art calendar-art reveal" aria-label="만남 기록에서 다음 연락 일정으로 신호가 이어지는 그림">
+        <span class="art-port" aria-hidden="true"></span>
+        <span class="art-kicker">CONTEXT → NEXT ACTION</span>
+        <div class="calendar-head"><span>10월의 할 일</span><b>· · ·</b></div>
+        <div class="calendar-week"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div>
+        <div class="calendar-days"><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span class="day-active">28</span><span>29</span><span>30</span><span>31</span><span>1</span></div>
+        <div class="task-card"><span class="task-check">✓</span><div><small>가상 일정 예시</small><strong>첫 상담 고객에게 다시 연락</strong></div><span class="task-arrow">↗</span></div>
+      </div>
+    </section>
+    <section class="chapter chapter-flip" id="scene-2" data-scene="2" aria-labelledby="scene-2-title">
+      <div class="chapter-copy reveal">
+        <div class="chapter-top"><span class="chapter-number">02 / 그 시작, 만남 기록</span><span class="chapter-time">EARLIER · TUE 16:30</span></div>
+        <p class="before-label">만남 직후에는</p><p class="before-action">명함은 사진으로, 대화 내용은 메모와 메시지로 따로 남깁니다.</p>
+        <h2 id="scene-2-title">흩어진 명함과 대화를,<br><em>한 고객 기록으로 모읍니다.</em></h2>
+        <p class="feature-copy">음성 녹음과 사진 촬영으로 만남의 내용을 등록해 다음 행동의 근거로 남깁니다.</p>
+        <span class="feature-tag">현재 페이지의 기능 · 만남 등록</span>
+      </div>
+      <span class="anchor chapter-anchor" id="anchor-2" aria-hidden="true"></span>
+      <div class="chapter-art record-art reveal" aria-label="흩어진 상담 기록이 한 고객 기록으로 모이는 그림">
+        <span class="art-port" aria-hidden="true"></span>
+        <span class="art-kicker">FROM FRAGMENTS TO CONTEXT</span>
+        <div class="fragment fragment-one"><span>▧</span> 명함 사진</div>
+        <div class="fragment fragment-two"><span>⌁</span> 상담 메모</div>
+        <div class="fragment fragment-three"><span>◉</span> 음성 기록</div>
+        <div class="mini-line l1"></div><div class="mini-line l2"></div><div class="mini-line l3"></div>
+        <div class="profile-card"><span class="profile-avatar">고</span><div><small>한 사람의 기록</small><strong>고객과의 첫 상담</strong><p>만남의 내용 · 다음에 이어갈 대화</p></div><span class="profile-spark">✦</span></div>
+      </div>
+    </section>
+    <section class="chapter" id="scene-3" data-scene="3" aria-labelledby="scene-3-title">
+      <div class="chapter-art map-art reveal" aria-label="고객의 관계와 중요도가 지도에 나타나는 그림">
+        <span class="art-port" aria-hidden="true"></span>
+        <span class="art-kicker">RELATIONSHIP MAP</span>
+        <svg class="map-lines" viewBox="0 0 540 420" aria-hidden="true"><path d="M270 205L113 105M270 205L428 98M270 205L95 317M270 205L435 306M270 205L345 358M113 105L428 98M95 317L345 358"/></svg>
+        <span class="map-node map-center">나</span><span class="map-node map-a">고객 A</span><span class="map-node map-b">고객 B</span><span class="map-node map-c">첫 상담 고객</span><span class="map-node map-d">고객 D</span><span class="map-node map-e">고객 E</span>
+        <span class="map-info"><b>첫 상담 고객</b><small>만남의 맥락이 연결됐어요</small></span>
+      </div>
+      <span class="anchor chapter-anchor" id="anchor-3" aria-hidden="true"></span>
+      <div class="chapter-copy reveal">
+        <div class="chapter-top"><span class="chapter-number">03 / 관계 확인</span><span class="chapter-time">WED · 09:10</span></div>
+        <p class="before-label">지금은</p><p class="before-action">연락처 목록을 훑으며 누구에게 먼저 연락할지 떠올립니다.</p>
+        <h2 id="scene-3-title">오늘 챙길 고객을,<br><em>관계 지도에서 확인합니다.</em></h2>
+        <p class="feature-copy">중요도와 카테고리를 살펴보며 지금 연락할 사람을 한눈에 파악합니다.</p>
+        <span class="feature-tag">현재 페이지의 기능 · 관계 지도</span>
+      </div>
+    </section>
+    <section class="chapter chapter-flip" id="scene-4" data-scene="4" aria-labelledby="scene-4-title">
+      <div class="chapter-art search-art reveal" aria-label="일상적인 질문이 고객 기록과 연결되는 그림">
+        <span class="art-port" aria-hidden="true"></span>
+        <span class="art-kicker">ASK IN YOUR OWN WORDS</span>
+        <div class="query-bubble">“지난주에 상담했던 그 고객,<br>무슨 이야기를 나눴지?” <span>↗</span></div>
+        <div class="search-route" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="answer-card"><span class="answer-mark">✦</span><div><small>가상 검색 결과</small><strong>첫 상담 고객의 기록</strong><p>지난 대화의 맥락을 다시 확인합니다.</p></div></div>
+      </div>
+      <span class="anchor chapter-anchor" id="anchor-4" aria-hidden="true"></span>
+      <div class="chapter-copy reveal">
+        <div class="chapter-top"><span class="chapter-number">04 / 연락하기 전</span><span class="chapter-time">NEXT WEEK</span></div>
+        <p class="before-label">지금은</p><p class="before-action">예전 메모와 메시지를 뒤져 무슨 대화를 했는지 찾습니다.</p>
+        <h2 id="scene-4-title">다시 연락하기 전,<br><em>지난 대화를 찾아봅니다.</em></h2>
+        <p class="feature-copy">일상적인 질문으로 등록된 대화와 만남의 맥락에서 고객의 기록을 찾아 확인합니다.</p>
+        <span class="feature-tag">현재 페이지의 기능 · 개인 Pro</span>
+      </div>
+    </section>
+
+    <section class="finale" id="scene-5" data-scene="5" aria-labelledby="final-title">
+      <span class="anchor finale-anchor" id="anchor-5" aria-hidden="true"></span>
+      <div class="finale-content reveal"><span class="finale-kicker">THE CONNECTION CONTINUES</span><h2 id="final-title">다음 연락을 놓치지 않고,<br><em>고객과의 대화에 집중합니다.</em></h2><p>흩어졌던 만남의 기록과 다음 행동이 이어집니다.</p><div class="finale-connection"><span>설계사</span><i></i><b>✦</b><i></i><span>고객</span></div></div>
+      <div class="upcoming reveal"><span>COMING NEXT · 출시 예정</span><strong>상황에 딱 맞는 맞춤형 메일 제안</strong><p>연락할 시기가 되면 AI가 맥락에 맞는 메일 초안을 먼저 제안합니다. 사용자는 최종 검토자 역할만 수행하세요.</p></div>
+      <nav class="concept-nav reveal" aria-label="다른 랜딩페이지 시안 보기"><a href="./">1안 다시 보기</a><a href="../concept-02-full/">2안 보기</a><a class="concept-nav-home" href="../">시안 선택 화면</a></nav>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>Persnapse · Landing Concept 01</span><p>사용자 행동과 고객 기록은 애니메이션 검토를 위한 가상 예시입니다. 기능 범위와 문구는 팀 자료로 확인합니다.</p><a href="#top">맨 위로 ↑</a></footer>
+  <div class="scene-counter" aria-hidden="true"><span id="counter-now">00</span><i></i><span>05</span></div>
+</body>
+</html>

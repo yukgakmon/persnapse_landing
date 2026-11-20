@@ -1,0 +1,213 @@
+const story = document.querySelector('#story');
+const thread = document.querySelector('#thread');
+const basePath = document.querySelector('#thread-base');
+const haloPath = document.querySelector('#thread-halo');
+const activePath = document.querySelector('#thread-active');
+const pulseHalo = document.querySelector('#pulse-halo');
+const pulseCore = document.querySelector('#pulse-core');
+const branchGroup = document.querySelector('#thread-branches');
+const branchPulse = document.querySelector('#branch-pulse');
+const counter = document.querySelector('#counter-now');
+const sections = [...document.querySelectorAll('[data-scene]')];
+const anchors = sections.map((_, index) => document.querySelector(`#anchor-${index}`));
+const smallScreen = window.matchMedia('(max-width: 760px)');
+
+let pathLength = 0;
+let anchorPoints = [];
+let revealedLength = 0;
+let currentScene = 0;
+let branchData = [];
+let targetRevealY = 0;
+let displayedRevealY = 0;
+let signalFrame = 0;
+let lastSignalTime = 0;
+let signalInitialized = false;
+let signalDirection = 1;
+
+function placeSignal(path, total, distance, tail, direction) {
+  const start = direction > 0 ? Math.max(0, distance - tail) : distance;
+  const visible = direction > 0 ? distance - start : Math.min(tail, total - start);
+  path.style.strokeDasharray = `${visible} ${total + tail}`;
+  path.style.strokeDashoffset = String(-start);
+  path.style.opacity = visible > 0 ? '1' : '0';
+}
+
+function lengthAtY(targetY) {
+  if (!pathLength) return 0;
+  let low = 0;
+  let high = pathLength;
+  for (let step = 0; step < 24; step += 1) {
+    const middle = (low + high) / 2;
+    if (activePath.getPointAtLength(middle).y < targetY) low = middle;
+    else high = middle;
+  }
+  return (low + high) / 2;
+}
+
+function measureThread() {
+  if (signalFrame) cancelAnimationFrame(signalFrame);
+  signalFrame = 0;
+  signalInitialized = false;
+  const storyRect = story.getBoundingClientRect();
+  const width = story.clientWidth;
+  const height = story.scrollHeight;
+  const points = anchors.map(anchor => {
+    const rect = anchor.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2 - storyRect.left,
+      y: rect.top + rect.height / 2 - storyRect.top
+    };
+  });
+  anchorPoints = points;
+  thread.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  thread.style.height = `${height}px`;
+
+  const swing = smallScreen.matches ? 7 : 22;
+  let route = `M ${points[0].x} ${points[0].y}`;
+  for (let index = 1; index < points.length; index += 1) {
+    const previous = points[index - 1];
+    const next = points[index];
+    const distance = next.y - previous.y;
+    const direction = index % 2 === 0 ? -1 : 1;
+    route += ` C ${previous.x + swing * direction} ${previous.y + distance * .38}, ${next.x - swing * direction} ${next.y - distance * .38}, ${next.x} ${next.y}`;
+  }
+
+  [basePath, haloPath, activePath].forEach(path => path.setAttribute('d', route));
+  pathLength = activePath.getTotalLength();
+  [haloPath, activePath].forEach(path => {
+    path.style.strokeDasharray = `0 ${pathLength + 1}`;
+  });
+
+  branchGroup.replaceChildren();
+  branchData = sections.slice(1, 5).map((section, offset) => {
+    const index = offset + 1;
+    const port = section.querySelector('.art-port').getBoundingClientRect();
+    const target = {
+      x: port.left + port.width / 2 - storyRect.left,
+      y: port.top + port.height / 2 - storyRect.top
+    };
+    const source = points[index];
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const branchRoute = smallScreen.matches
+      ? `M ${source.x} ${source.y} C ${source.x + 20} ${source.y + dy * .35}, ${target.x - 13} ${target.y - dy * .3}, ${target.x} ${target.y}`
+      : `M ${source.x} ${source.y} C ${source.x + dx * .4} ${source.y}, ${target.x - dx * .3} ${target.y}, ${target.x} ${target.y}`;
+    const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const active = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    base.setAttribute('class', 'thread-branch-base');
+    active.setAttribute('class', 'thread-branch-active');
+    base.setAttribute('d', branchRoute);
+    active.setAttribute('d', branchRoute);
+    branchGroup.append(base, active);
+    const length = active.getTotalLength();
+    active.style.strokeDasharray = `0 ${length + 1}`;
+    active.style.strokeDashoffset = '0';
+    return { active, length, scene: index, progress: 0 };
+  });
+  updateScroll();
+}
+
+function updateScroll() {
+  if (!pathLength) return;
+  const storyTop = story.getBoundingClientRect().top;
+  targetRevealY = window.innerHeight * .92 - storyTop;
+
+  let nextScene = 0;
+  sections.forEach((section, index) => {
+    if (section.getBoundingClientRect().top < window.innerHeight * .78) nextScene = index;
+  });
+  currentScene = nextScene;
+  sections.forEach((section, index) => section.classList.toggle('is-current', index === currentScene));
+  counter.textContent = String(currentScene).padStart(2, '0');
+
+  if (!signalInitialized) {
+    displayedRevealY = targetRevealY;
+    signalInitialized = true;
+    renderSignal(displayedRevealY);
+  } else if (!signalFrame) {
+    lastSignalTime = 0;
+    signalFrame = requestAnimationFrame(animateSignal);
+  }
+}
+
+function animateSignal(now) {
+  const dt = lastSignalTime ? Math.min((now - lastSignalTime) / 1000, .05) : 1 / 60;
+  lastSignalTime = now;
+  const delta = targetRevealY - displayedRevealY;
+  if (Math.abs(delta) < .6) {
+    displayedRevealY = targetRevealY;
+    signalFrame = 0;
+    lastSignalTime = 0;
+    renderSignal(displayedRevealY);
+    return;
+  }
+  const distance = Math.abs(delta);
+  signalDirection = Math.sign(delta);
+  const maxStep = 1900 * dt;
+  const softStep = distance * (1 - Math.exp(-12 * dt));
+  displayedRevealY += Math.sign(delta) * Math.min(distance, maxStep, softStep);
+  renderSignal(displayedRevealY);
+  signalFrame = requestAnimationFrame(animateSignal);
+}
+
+function renderSignal(revealY) {
+  revealedLength = Math.max(0, Math.min(pathLength, lengthAtY(revealY)));
+  const tail = 48;
+  [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, signalDirection));
+  haloPath.style.opacity = revealedLength > 0 ? '.27' : '0';
+  sections.slice(1).forEach((section, offset) => {
+    const index = offset + 1;
+    const reached = revealY >= anchorPoints[index].y;
+    section.classList.toggle('is-reached', reached);
+    if (index === 5) section.classList.toggle('is-arrived', reached);
+  });
+
+  const travel = smallScreen.matches ? 150 : 110;
+  branchData.forEach(branch => {
+    branch.progress = Math.max(0, Math.min(1, (revealY - anchorPoints[branch.scene].y) / travel));
+    const moving = branch.progress > 0 && branch.progress < 1;
+    branch.active.classList.toggle('is-active', moving);
+    placeSignal(branch.active, branch.length, branch.length * branch.progress, Math.min(branch.length, 28), signalDirection);
+    if (!moving) branch.active.style.opacity = '0';
+    sections[branch.scene].classList.toggle('is-arrived', branch.progress >= .98);
+  });
+
+  const point = activePath.getPointAtLength(revealedLength);
+  pulseHalo.setAttribute('cx', String(point.x));
+  pulseHalo.setAttribute('cy', String(point.y));
+  pulseCore.setAttribute('cx', String(point.x));
+  pulseCore.setAttribute('cy', String(point.y));
+  const hasSignal = revealedLength > 1;
+  pulseHalo.style.opacity = hasSignal ? '.34' : '0';
+  pulseCore.style.opacity = hasSignal ? '1' : '0';
+
+  const travelling = branchData.find(branch => branch.progress > 0 && branch.progress < 1);
+  if (travelling) {
+    const branchPoint = travelling.active.getPointAtLength(travelling.length * travelling.progress);
+    branchPulse.setAttribute('cx', String(branchPoint.x));
+    branchPulse.setAttribute('cy', String(branchPoint.y));
+    branchPulse.style.opacity = '1';
+  } else {
+    branchPulse.style.opacity = '0';
+  }
+}
+
+document.body.classList.add('motion-ready');
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -9% 0px', threshold: .07 });
+  document.querySelectorAll('.hero .reveal').forEach(element => observer.observe(element));
+} else {
+  document.querySelectorAll('.reveal').forEach(element => element.classList.add('is-visible'));
+}
+
+window.addEventListener('scroll', updateScroll, { passive: true });
+window.addEventListener('resize', measureThread);
+document.fonts?.ready.then(measureThread);
+measureThread();
