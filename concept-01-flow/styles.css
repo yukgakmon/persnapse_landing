@@ -92,7 +92,7 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
   width:100%;
   height:auto;
   opacity:.85;
-  filter:drop-shadow(0 13px 14px #6846761a);
+  filter:saturate(.9) drop-shadow(0 13px 14px #6846761a);
 }
 .hero-detail{max-width:590px;margin:0 auto}
 .hero-detail > p{margin:0;font-size:clamp(15px,1.14vw,18px);line-height:1.8;color:#625970;letter-spacing:-.03em}
