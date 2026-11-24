@@ -12,12 +12,14 @@ const counter = document.querySelector('#counter-now');
 const sceneCounter = document.querySelector('.scene-counter');
 const landingEnding = document.querySelector('.landing-ending');
 const sections = [...document.querySelectorAll('[data-scene]')];
+const chapters = sections.slice(1, -1);
 const anchors = sections.map((_, index) => document.querySelector(`#anchor-${index}`));
 const smallScreen = window.matchMedia('(max-width: 760px)');
 const svgNamespace = 'http://www.w3.org/2000/svg';
 
 let pathLength = 0;
 let anchorPoints = [];
+let cardPoints = [];
 let revealedLength = 0;
 let currentScene = 0;
 let branchData = [];
@@ -80,25 +82,59 @@ function measureThread() {
   signalInitialized = false;
   const storyRect = story.getBoundingClientRect();
   const width = story.clientWidth;
-  const height = story.scrollHeight;
-  const points = anchors.map(anchor => {
-    const rect = anchor.getBoundingClientRect();
+  const height = story.clientHeight;
+  if (smallScreen.matches) {
+    chapters.forEach(section => {
+      const card = section.querySelector('.chapter-art');
+      section.style.setProperty('--card-point-top', `${card.offsetTop + 16}px`);
+    });
+  }
+  const measurePoint = element => {
+    const rect = element.getBoundingClientRect();
     return {
       x: rect.left + rect.width / 2 - storyRect.left,
       y: rect.top + rect.height / 2 - storyRect.top
     };
-  });
+  };
+  const points = anchors.map(measurePoint);
+  cardPoints = smallScreen.matches
+    ? chapters.map(section => measurePoint(section.querySelector('.mobile-card-point')))
+    : [];
   anchorPoints = points;
   thread.setAttribute('viewBox', `0 0 ${width} ${height}`);
   thread.style.height = `${height}px`;
   updateThreadTextMask(storyRect, width, height);
 
-  const swing = smallScreen.matches ? 7 : 22;
-  let route = `M ${points[0].x} ${points[0].y}`;
-  for (let index = 1; index < points.length; index += 1) {
-    const previous = points[index - 1];
-    const next = points[index];
+  const swing = 22;
+  const routePoints = points.flatMap((point, index) => {
+    const cardPoint = cardPoints[index - 1];
+    return cardPoint ? [point, cardPoint] : [point];
+  });
+  if (smallScreen.matches) {
+    const [start] = points;
+    const intro = story.querySelector('.story-intro').getBoundingClientRect();
+    const lastCardPoint = cardPoints.at(-1);
+    const lastCard = sections[sections.length - 2].querySelector('.chapter-art');
+    routePoints.splice(1, 0, {
+      x: start.x,
+      y: intro.bottom - storyRect.top - 22
+    });
+    routePoints.splice(-1, 0, {
+      x: lastCardPoint.x,
+      y: lastCard.getBoundingClientRect().bottom - storyRect.top + 18
+    });
+  }
+  let route = `M ${routePoints[0].x} ${routePoints[0].y}`;
+  for (let index = 1; index < routePoints.length; index += 1) {
+    const previous = routePoints[index - 1];
+    const next = routePoints[index];
     const distance = next.y - previous.y;
+    if (smallScreen.matches) {
+      route += Math.abs(previous.x - next.x) < .5
+        ? ` L ${next.x} ${next.y}`
+        : ` C ${previous.x} ${previous.y + distance * .4}, ${next.x} ${next.y - distance * .4}, ${next.x} ${next.y}`;
+      continue;
+    }
     const direction = index % 2 === 0 ? -1 : 1;
     route += ` C ${previous.x + swing * direction} ${previous.y + distance * .38}, ${next.x - swing * direction} ${next.y - distance * .38}, ${next.x} ${next.y}`;
   }
@@ -110,7 +146,8 @@ function measureThread() {
   });
 
   branchGroup.replaceChildren();
-  branchData = sections.slice(1, 5).map((section, offset) => {
+  const branchSections = smallScreen.matches ? [] : chapters;
+  branchData = branchSections.map((section, offset) => {
     const index = offset + 1;
     const port = section.querySelector('.art-port').getBoundingClientRect();
     const target = {
@@ -119,10 +156,7 @@ function measureThread() {
     };
     const source = points[index];
     const dx = target.x - source.x;
-    const dy = target.y - source.y;
-    const branchRoute = smallScreen.matches
-      ? `M ${source.x} ${source.y} C ${source.x + 20} ${source.y + dy * .35}, ${target.x - 13} ${target.y - dy * .3}, ${target.x} ${target.y}`
-      : `M ${source.x} ${source.y} C ${source.x + dx * .4} ${source.y}, ${target.x - dx * .3} ${target.y}, ${target.x} ${target.y}`;
+    const branchRoute = `M ${source.x} ${source.y} C ${source.x + dx * .4} ${source.y}, ${target.x - dx * .3} ${target.y}, ${target.x} ${target.y}`;
     const base = document.createElementNS(svgNamespace, 'path');
     const active = document.createElementNS(svgNamespace, 'path');
     base.setAttribute('class', 'thread-branch-base');
@@ -191,10 +225,13 @@ function renderSignal(revealY) {
     const index = offset + 1;
     const reached = revealY >= anchorPoints[index].y;
     section.classList.toggle('is-reached', reached);
-    if (index === 5) section.classList.toggle('is-arrived', reached);
+    const cardPoint = cardPoints[index - 1];
+    if (index === sections.length - 1 || cardPoint) {
+      section.classList.toggle('is-arrived', cardPoint ? revealY >= cardPoint.y : reached);
+    }
   });
 
-  const travel = smallScreen.matches ? 150 : 110;
+  const travel = 110;
   branchData.forEach(branch => {
     branch.progress = Math.max(0, Math.min(1, (revealY - anchorPoints[branch.scene].y) / travel));
     const moving = branch.progress > 0 && branch.progress < 1;

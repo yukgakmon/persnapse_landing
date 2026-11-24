@@ -6,13 +6,17 @@
   <meta name="theme-color" content="#f7f5fc">
   <meta name="description" content="오늘 챙길 고객과 지난 약속을 한곳에서 확인하세요. 보험설계사를 위한 고객관리 도구 퍼스냅스.">
   <title>Persnapse — 다시 연락할 고객을 놓치지 않도록</title>
-  <link rel="stylesheet" href="./styles.css?v=story-counter">
-  <script src="./app.js?v=story-counter" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=network-map-aligned">
+  <script src="./app.js?v=thread-layout-height" defer></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#top" aria-label="퍼스냅스 처음으로">Persnapse<span>.</span></a>
-    <a class="topbar-link" href="#scene-1">사용 흐름 보기</a>
+    <nav class="topbar-nav" aria-label="페이지 바로가기">
+      <a href="#scene-1">기능</a>
+      <a href="#pricing-title">요금</a>
+      <a href="#faq-title">자주 묻는 질문</a>
+    </nav>
   </header>
 
   <main class="story" id="story">
@@ -62,13 +66,26 @@
         <div class="chapter-top"><span class="chapter-number">월요일 아침</span></div>
         <p class="before-action">“오늘 누구부터 전화하지?”</p>
         <h2 id="scene-1-title">오늘 챙길 고객을<br><em>먼저 확인합니다.</em></h2>
-        <p class="feature-copy">아침에 퍼스냅스를 열고, 오늘 연락할 고객과 그 이유를 살펴봅니다.</p>
+        <p class="feature-copy">오늘 연락할 고객과 그 이유를 확인하고, 13·25회차나 갱신·만기가 다가오는 계약도 미리 챙깁니다.</p>
       </div>
       <span class="anchor chapter-anchor" id="anchor-1" aria-hidden="true"></span>
-      <div class="chapter-art journey-art reveal">
+      <span class="anchor mobile-card-point" aria-hidden="true"></span>
+      <div class="chapter-art journey-art customer-preview reveal">
         <span class="art-port" aria-hidden="true"></span>
-        <h3>오늘 챙길 고객</h3>
-        <div class="journey-card"><strong>박 고객님</strong><p>지난 금요일에 다시 연락하기로 했어요.</p></div>
+        <div class="customer-preview-panel">
+          <h3>오늘 연락할 고객</h3>
+          <ul class="customer-list">
+            <li><span class="customer-initial" aria-hidden="true">박</span><strong>박 고객님</strong><span class="customer-reason">13회차 당일</span></li>
+            <li><span class="customer-initial" aria-hidden="true">김</span><strong>김 고객님</strong><span class="customer-reason">생일 당일</span></li>
+            <li><span class="customer-initial" aria-hidden="true">이</span><strong>이 고객님</strong><span class="customer-reason">100일 무연락</span></li>
+          </ul>
+          <h4 class="contract-heading">관리가 필요한 고객</h4>
+          <ul class="customer-list">
+            <li><span class="customer-initial" aria-hidden="true">최</span><strong>최 고객님</strong><span class="customer-reason">25회차 D-7</span></li>
+            <li><span class="customer-initial" aria-hidden="true">정</span><strong>정 고객님</strong><span class="customer-reason">자동차보험 갱신 D-30</span></li>
+          </ul>
+        </div>
+        <small class="customer-preview-note">가상 고객 데이터로 구성한 사용 예시</small>
       </div>
     </section>
 
@@ -77,13 +94,20 @@
         <div class="chapter-top"><span class="chapter-number">전화를 걸기 직전</span></div>
         <p class="before-action">“지난번에 뭘 확인해 드리기로 했더라?”</p>
         <h2 id="scene-2-title">지난 대화와 약속을<br><em>한곳에서 봅니다.</em></h2>
-        <p class="feature-copy">박 고객님의 기록을 열고, 지난 대화에서 어디까지 이야기했는지 확인합니다.</p>
+        <p class="feature-copy">박 고객님께 전화하기 전, 지난번에 어떤 서류를 확인해 드리기로 했는지 살펴봅니다.</p>
       </div>
       <span class="anchor chapter-anchor" id="anchor-2" aria-hidden="true"></span>
+      <span class="anchor mobile-card-point" aria-hidden="true"></span>
       <div class="chapter-art journey-art reveal">
         <span class="art-port" aria-hidden="true"></span>
-        <h3>박 고객님과의 지난 대화</h3>
-        <div class="journey-card"><strong>지난 상담 메모</strong><p>보내주신 서류를 확인하고 다시 전화드리기로 했어요.</p></div>
+        <div class="customer-preview-panel">
+          <h3>박 고객님</h3>
+          <dl class="customer-history">
+            <div><dt>지난 대화</dt><dd>박 고객님이 확인이 필요한 보험 서류를 보내주셨어요.</dd></div>
+            <div><dt>지난번 약속</dt><dd>서류를 확인하고 다시 전화드리기로 했어요.</dd></div>
+          </dl>
+        </div>
+        <small class="customer-preview-note">가상 고객 데이터로 구성한 사용 예시</small>
       </div>
     </section>
 
@@ -95,10 +119,17 @@
         <p class="feature-copy">박 고객님과 나눈 이야기와 다음 약속을 짧게 남깁니다.</p>
       </div>
       <span class="anchor chapter-anchor" id="anchor-3" aria-hidden="true"></span>
+      <span class="anchor mobile-card-point" aria-hidden="true"></span>
       <div class="chapter-art journey-art reveal">
         <span class="art-port" aria-hidden="true"></span>
-        <h3>박 고객님과의 통화 기록</h3>
-        <div class="journey-card"><strong>오늘 남긴 메모</strong><p>다음 주 화요일에 빠진 서류가 없는지 확인해서 연락드리기로 했어요.</p></div>
+        <div class="customer-preview-panel">
+          <h3>박 고객님 · 통화 기록</h3>
+          <dl class="customer-history">
+            <div><dt>오늘 남긴 메모</dt><dd>빠진 보험 서류가 있는지 확인해 드리기로 했어요.</dd></div>
+            <div><dt>다음 연락 · 다음 주 화요일</dt><dd>보험 서류 확인 결과 안내</dd></div>
+          </dl>
+        </div>
+        <small class="customer-preview-note">가상 고객 데이터로 구성한 사용 예시</small>
       </div>
     </section>
 
@@ -110,15 +141,54 @@
         <p class="feature-copy">오늘 챙길 고객을 확인하고, 지난번에 약속한 내용부터 이야기를 이어갑니다.</p>
       </div>
       <span class="anchor chapter-anchor" id="anchor-4" aria-hidden="true"></span>
+      <span class="anchor mobile-card-point" aria-hidden="true"></span>
       <div class="chapter-art journey-art reveal">
         <span class="art-port" aria-hidden="true"></span>
-        <h3>오늘 챙길 고객</h3>
-        <div class="journey-card"><strong>박 고객님</strong><p>지난 통화에서 약속한 서류 확인 결과를 알려드릴 차례예요.</p></div>
+        <div class="customer-preview-panel">
+          <h3>오늘 연락할 고객</h3>
+          <ul class="customer-list">
+            <li><span class="customer-initial" aria-hidden="true">박</span><strong>박 고객님</strong><span class="customer-reason">보험 서류 확인 결과 안내</span></li>
+          </ul>
+        </div>
+        <small class="customer-preview-note">가상 고객 데이터로 구성한 사용 예시</small>
       </div>
     </section>
 
-    <section class="finale" id="scene-5" data-scene="5" aria-labelledby="final-title">
-      <span class="anchor finale-anchor" id="anchor-5" aria-hidden="true"></span>
+    <section class="chapter" id="scene-5" data-scene="5" aria-labelledby="network-title">
+      <div class="chapter-copy">
+        <p class="before-action">“박 고객님은 누구 소개로 만났더라?”</p>
+        <h2 id="network-title">소개로 이어진 고객을<br><em>한눈에 봅니다.</em></h2>
+        <p class="feature-copy">인맥 지도에서 소개 관계를 따라가고, 연결된 고객의 카드를 확인합니다.</p>
+      </div>
+      <span class="anchor chapter-anchor" id="anchor-5" aria-hidden="true"></span>
+      <span class="anchor mobile-card-point" aria-hidden="true"></span>
+      <div class="chapter-art journey-art customer-preview reveal">
+        <span class="art-port" aria-hidden="true"></span>
+        <div class="customer-preview-panel">
+        <h3>인맥 지도</h3>
+        <p class="network-count">연결된 고객 5명 · 소개로 온 고객 2명</p>
+        <div class="network-filters"><strong>✓ 전체</strong><span>소개</span><span>가족</span></div>
+        <div class="network-example" role="img" aria-label="김 고객님이 박 고객님을 소개한 관계가 강조된 고객 연결 지도">
+          <div class="network-links" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <span class="network-edge-label" aria-hidden="true">소개 ↗</span>
+          <span class="network-node node-kim">김 고객님</span>
+          <span class="network-node node-park">박 고객님</span>
+          <span class="network-node node-lee">이 고객님</span>
+          <span class="network-node node-choi">최 고객님</span>
+          <span class="network-node node-jung">정 고객님</span>
+        </div>
+        <div class="network-customer">
+          <strong>김 고객님</strong>
+          <span>소개한 고객 1명 · 이어진 계약 2건</span>
+          <span>마지막 연락일 · 2026년 11월 19일</span>
+          <span class="network-card-label">고객 카드</span>
+        </div>
+        </div>
+        <small class="customer-preview-note">가상 고객 데이터로 구성한 사용 예시</small>
+      </div>
+    </section>
+    <section class="finale" id="scene-6" data-scene="6" aria-labelledby="final-title">
+      <span class="anchor finale-anchor" id="anchor-6" aria-hidden="true"></span>
       <div class="finale-content reveal">
         <h2 id="final-title">보험 영업에만<br><em>열정을 쏟을 수 있게.</em></h2>
         <p>오늘 챙길 고객과 지난 약속은 퍼스냅스에서 확인하고, 고객과의 대화에 집중하세요.</p>
@@ -126,6 +196,7 @@
       </div>
     </section>
     <div class="landing-ending">
+
       <section class="pricing-preview" aria-labelledby="pricing-title">
         <h2 id="pricing-title">요금제</h2>
         <div class="pricing-preview-grid" aria-hidden="true">
@@ -162,6 +233,6 @@
   </main>
 
   <footer class="site-footer"><span>Persnapse.</span><a href="#top">맨 위로 ↑</a></footer>
-  <div class="scene-counter" aria-hidden="true"><span id="counter-now">00</span><i></i><span>05</span></div>
+  <div class="scene-counter" aria-hidden="true"><span id="counter-now">00</span><i></i><span>06</span></div>
 </body>
 </html>
