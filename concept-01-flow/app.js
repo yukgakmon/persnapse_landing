@@ -175,7 +175,11 @@ function measureThread() {
 function updateScroll() {
   if (!pathLength) return;
   const storyTop = story.getBoundingClientRect().top;
-  targetRevealY = window.innerHeight * .92 - storyTop;
+  const revealOffset = window.innerHeight * .92;
+  const mobileStartOffset = smallScreen.matches
+    ? Math.max(0, revealOffset - story.offsetTop - anchorPoints[0].y)
+    : 0;
+  targetRevealY = revealOffset - storyTop - mobileStartOffset;
 
   let nextScene = 0;
   sections.forEach((section, index) => {

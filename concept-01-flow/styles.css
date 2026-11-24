@@ -91,6 +91,7 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
   display:block;
   width:100%;
   height:auto;
+  opacity:.85;
   filter:drop-shadow(0 13px 14px #6846761a);
 }
 .hero-detail{max-width:590px;margin:0 auto}
@@ -120,7 +121,10 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
 }
 
 @media(max-width:760px) {
-  .hero{padding:26px 18px 0}
+  .hero{min-height:0;padding:26px 18px 0}
+  .hero .hero-glow{display:none}
+  .hero .hero-tail{margin:0 auto;padding:16px 0 18px}
+  .hero .hero-tail .anchor{position:relative;top:auto;left:auto;margin:18px 0 0;align-self:center}
   .hero h1{font-size:clamp(30px,7.8vw,49px);margin:15px 0 5px}
   .brain-problem{width:min(calc(100% + 30px),630px)}
   .hero-detail > p{font-size:14px}
@@ -251,7 +255,7 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
   .mobile-card-point{display:block;position:absolute;top:var(--card-point-top);left:31px;opacity:.48}
   .chapter.is-arrived .mobile-card-point{opacity:1;animation:nodeArrival .7s ease-out both}
   .chapter-art .art-port{display:none}
-  .story-intro{min-height:270px}
+  .story-intro{min-height:0;padding:26px 24px 64px}
   .finale{padding-top:176px}
   .finale-anchor{top:132px;left:calc(50% - 8.5px)}
 }
