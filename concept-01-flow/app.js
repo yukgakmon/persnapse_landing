@@ -1,5 +1,6 @@
 const story = document.querySelector('#story');
 const thread = document.querySelector('#thread');
+const threadTextMask = document.querySelector('#thread-text-mask');
 const basePath = document.querySelector('#thread-base');
 const haloPath = document.querySelector('#thread-halo');
 const activePath = document.querySelector('#thread-active');
@@ -8,9 +9,12 @@ const pulseCore = document.querySelector('#pulse-core');
 const branchGroup = document.querySelector('#thread-branches');
 const branchPulse = document.querySelector('#branch-pulse');
 const counter = document.querySelector('#counter-now');
+const sceneCounter = document.querySelector('.scene-counter');
+const landingEnding = document.querySelector('.landing-ending');
 const sections = [...document.querySelectorAll('[data-scene]')];
 const anchors = sections.map((_, index) => document.querySelector(`#anchor-${index}`));
 const smallScreen = window.matchMedia('(max-width: 760px)');
+const svgNamespace = 'http://www.w3.org/2000/svg';
 
 let pathLength = 0;
 let anchorPoints = [];
@@ -44,6 +48,32 @@ function lengthAtY(targetY) {
   return (low + high) / 2;
 }
 
+function updateThreadTextMask(storyRect, width, height) {
+  function rectangle(x, y, rectWidth, rectHeight, fill) {
+    const rect = document.createElementNS(svgNamespace, 'rect');
+    Object.entries({ x, y, width: rectWidth, height: rectHeight, fill }).forEach(([key, value]) => {
+      rect.setAttribute(key, String(value));
+    });
+    return rect;
+  }
+
+  threadTextMask.setAttribute('width', String(width));
+  threadTextMask.setAttribute('height', String(height));
+  const cutouts = [rectangle(0, 0, width, height, 'white')];
+  const textBlocks = story.querySelectorAll('.scroll-hint, .story-intro > *, .chapter-copy > *, .journey-art > :not(.art-port), .finale h2, .finale-content > p, .finale-connection span');
+  const range = document.createRange();
+  const padding = 10;
+  textBlocks.forEach(element => {
+    range.selectNodeContents(element);
+    for (const rect of range.getClientRects()) {
+      if (!rect.width || !rect.height) continue;
+      cutouts.push(rectangle(rect.left - storyRect.left - padding, rect.top - storyRect.top - padding,
+        rect.width + 2 * padding, rect.height + 2 * padding, 'black'));
+    }
+  });
+  threadTextMask.replaceChildren(...cutouts);
+}
+
 function measureThread() {
   if (signalFrame) cancelAnimationFrame(signalFrame);
   signalFrame = 0;
@@ -61,6 +91,7 @@ function measureThread() {
   anchorPoints = points;
   thread.setAttribute('viewBox', `0 0 ${width} ${height}`);
   thread.style.height = `${height}px`;
+  updateThreadTextMask(storyRect, width, height);
 
   const swing = smallScreen.matches ? 7 : 22;
   let route = `M ${points[0].x} ${points[0].y}`;
@@ -92,8 +123,8 @@ function measureThread() {
     const branchRoute = smallScreen.matches
       ? `M ${source.x} ${source.y} C ${source.x + 20} ${source.y + dy * .35}, ${target.x - 13} ${target.y - dy * .3}, ${target.x} ${target.y}`
       : `M ${source.x} ${source.y} C ${source.x + dx * .4} ${source.y}, ${target.x - dx * .3} ${target.y}, ${target.x} ${target.y}`;
-    const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    const active = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const base = document.createElementNS(svgNamespace, 'path');
+    const active = document.createElementNS(svgNamespace, 'path');
     base.setAttribute('class', 'thread-branch-base');
     active.setAttribute('class', 'thread-branch-active');
     base.setAttribute('d', branchRoute);
@@ -119,6 +150,7 @@ function updateScroll() {
   currentScene = nextScene;
   sections.forEach((section, index) => section.classList.toggle('is-current', index === currentScene));
   counter.textContent = String(currentScene).padStart(2, '0');
+  sceneCounter.hidden = landingEnding.getBoundingClientRect().top < window.innerHeight;
 
   if (!signalInitialized) {
     displayedRevealY = targetRevealY;
@@ -209,5 +241,6 @@ if ('IntersectionObserver' in window) {
 
 window.addEventListener('scroll', updateScroll, { passive: true });
 window.addEventListener('resize', measureThread);
+if (document.readyState !== 'complete') window.addEventListener('load', measureThread, { once: true });
 document.fonts?.ready.then(measureThread);
 measureThread();
