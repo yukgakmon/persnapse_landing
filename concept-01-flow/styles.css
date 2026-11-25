@@ -216,17 +216,22 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
 }
 .pricing-preview{padding:clamp(26px,4vw,44px) 24px clamp(24px,4vw,52px);text-align:center}
 .pricing-preview h2{margin:0 0 28px;font-size:clamp(30px,4vw,48px);letter-spacing:-.06em}
-.pricing-preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:var(--panel-width);margin:auto}
+.pricing-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:var(--panel-width);margin:auto}
 .pricing-preview-card,.landing-faq-list,.launch-section {
   border:1px solid var(--panel-border);
   border-radius:var(--panel-radius);
   background:var(--panel-surface);
   box-shadow:var(--panel-shadow);
 }
-.pricing-preview-card{display:grid;align-content:center;gap:16px;min-height:148px;padding:24px;text-align:left}
-.pricing-preview-card i{display:block;width:68%;height:8px;border-radius:8px;background:#eee3f8}
-.pricing-preview-card i:first-child{width:32%;height:20px;background:#e1cdf5}
-.pricing-preview-card i:last-child{width:48%}
+.pricing-preview-card{padding:clamp(20px,3.5vw,34px);text-align:left}
+.pricing-preview-pro{border-color:#cbb1ec;background:linear-gradient(145deg,#f4eafa,#fdfaff 76%)}
+.pricing-preview-card h3{margin:0;font-size:1.125rem}
+.pricing-price{margin:6px 0 8px;color:#6333a3}
+.pricing-price strong{font-size:clamp(30px,4.2vw,44px);letter-spacing:-.055em}
+.pricing-summary{margin:0;color:#5e4b70;font-size:.875rem;line-height:1.6}
+.pricing-features{display:grid;gap:8px;margin:16px 0 0;padding:15px 0 0 1.1em;border-top:1px solid #e5d8f0;color:#3e2758;font-size:.875rem;line-height:1.5}
+.pricing-features li::marker{color:#8a4ec1}
+.pricing-note{margin:14px 0 0;color:#685879;font-size:.8125rem}
 .landing-faq,.launch-section,.team-section{padding:clamp(30px,5vw,64px) 24px;text-align:center}
 .landing-faq h2,.launch-section h2{margin:0 0 24px;font-size:clamp(27px,3.5vw,40px);letter-spacing:-.06em}
 .landing-faq-list{max-width:var(--panel-width);margin:auto;padding:0 clamp(16px,3vw,32px);text-align:left}
@@ -247,7 +252,7 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
 .team-section{max-width:840px;margin:0 auto;border-top:1px solid #ded2eb}
 .team-section h2{margin:0 0 10px;font-size:clamp(21px,2.6vw,30px);letter-spacing:-.05em}
 .team-section p{margin:0;color:#625970;line-height:1.65}
-@media(max-width:560px){.pricing-preview-grid{grid-template-columns:1fr;max-width:340px}.pricing-preview-card{min-height:100px;gap:10px}}
+@media(max-width:560px){.pricing-preview-grid{grid-template-columns:1fr;max-width:340px}}
 .mobile-card-point{display:none}
 @media(max-width:760px){
   .chapter:has(.journey-art){min-height:0}
