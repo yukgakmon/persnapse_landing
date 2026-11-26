@@ -224,7 +224,7 @@ function renderSignal(revealY) {
   revealedLength = Math.max(0, Math.min(pathLength, lengthAtY(revealY)));
   const tail = 48;
   [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, signalDirection));
-  haloPath.style.opacity = revealedLength > 0 ? '.27' : '0';
+  haloPath.style.opacity = revealedLength > 0 ? '' : '0';
   sections.slice(1).forEach((section, offset) => {
     const index = offset + 1;
     const reached = revealY >= anchorPoints[index].y;
@@ -251,7 +251,7 @@ function renderSignal(revealY) {
   pulseCore.setAttribute('cx', String(point.x));
   pulseCore.setAttribute('cy', String(point.y));
   const hasSignal = revealedLength > 1;
-  pulseHalo.style.opacity = hasSignal ? '.34' : '0';
+  pulseHalo.style.opacity = hasSignal ? '' : '0';
   pulseCore.style.opacity = hasSignal ? '1' : '0';
 
   const travelling = branchData.find(branch => branch.progress > 0 && branch.progress < 1);

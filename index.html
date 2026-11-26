@@ -18,8 +18,8 @@
       "url": "https://persnapse-nu.vercel.app/"
     }
   </script>
-  <link rel="stylesheet" href="./concept-01-flow/styles.css?v=team-instagram-button">
-  <script src="./concept-01-flow/app.js?v=mobile-signal-origin" defer></script>
+  <link rel="stylesheet" href="./concept-01-flow/styles.css?v=privacy-footer">
+  <script src="./concept-01-flow/app.js?v=soft-signal" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -31,10 +31,11 @@
     </nav>
   </header>
 
+  <div class="landing-surface">
   <main class="story" id="story">
     <svg class="thread" id="thread" aria-hidden="true" preserveAspectRatio="none">
       <defs>
-        <filter id="thread-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="9"/></filter>
+        <filter id="thread-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5"/></filter>
         <linearGradient id="active-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b86aff"/><stop offset=".55" stop-color="#7223e9"/><stop offset="1" stop-color="#35b4c6"/></linearGradient>
         <mask id="thread-text-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse"></mask>
       </defs>
@@ -43,7 +44,7 @@
       <path class="thread-halo" id="thread-halo"></path>
       <path class="thread-active" id="thread-active"></path>
       <g id="thread-branches"></g>
-      <circle class="pulse-halo" id="pulse-halo" r="18"></circle>
+      <circle class="pulse-halo" id="pulse-halo" r="13"></circle>
       <circle class="pulse-core" id="pulse-core" r="6"></circle>
       <circle class="branch-pulse" id="branch-pulse" r="5"></circle>
       </g>
@@ -274,7 +275,7 @@
           </details>
           <details>
             <summary>고객 정보는 어떻게 다루나요?</summary>
-            <p>어떤 고객 정보를 받는지, 얼마나 보관하는지, 삭제는 어떻게 요청하는지 출시 전에 개인정보 처리 안내에서 확인할 수 있도록 준비하겠습니다.</p>
+            <p>출시 소식 신청 정보의 수집 항목, 보유 기간, 삭제 요청 방법은 <a href="./privacy.html">개인정보 처리방침</a>에서 확인하세요. 앱에서 다루는 고객 정보에 대해서는 출시 전에 안내하겠습니다.</p>
           </details>
         </div>
       </section>
@@ -295,9 +296,13 @@
 
   <footer class="site-footer">
     <span>Persnapse.</span>
-    <a href="./insurance-customer-management.html">보험설계사 고객관리 가이드</a>
-    <a href="#top">맨 위로 ↑</a>
+    <nav class="footer-links" aria-label="하단 메뉴">
+      <a href="./privacy.html">개인정보 처리방침</a>
+      <a href="mailto:jh0813b@gmail.com">문의하기</a>
+      <a href="./insurance-customer-management.html">보험설계사 고객관리 가이드</a>
+    </nav>
   </footer>
+  </div>
   <div class="scene-counter" aria-hidden="true"><span id="counter-now">00</span><i></i><span>06</span></div>
 </body>
 </html>
