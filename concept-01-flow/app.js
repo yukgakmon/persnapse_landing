@@ -34,11 +34,13 @@ let displayedRevealY = 0;
 let signalFrame = 0;
 let lastSignalTime = 0;
 let signalInitialized = false;
-let signalDirection = 1;
+let tailAlignment = 1;
+let targetTailAlignment = 1;
 
-function placeSignal(path, total, distance, tail, direction) {
-  const start = direction > 0 ? Math.max(0, distance - tail) : distance;
-  const visible = direction > 0 ? distance - start : Math.min(tail, total - start);
+function placeSignal(path, total, distance, tail, alignment) {
+  const start = Math.max(0, distance - tail * alignment);
+  const end = Math.min(total, distance + tail * (1 - alignment));
+  const visible = end - start;
   path.style.strokeDasharray = `${visible} ${total + tail}`;
   path.style.strokeDashoffset = String(-start);
   path.style.opacity = visible > 0 ? '1' : '0';
@@ -105,6 +107,7 @@ function measureThread() {
   if (signalFrame) cancelAnimationFrame(signalFrame);
   signalFrame = 0;
   signalInitialized = false;
+  tailAlignment = targetTailAlignment;
   const storyRect = story.getBoundingClientRect();
   const width = story.clientWidth;
   const height = story.clientHeight;
@@ -239,28 +242,40 @@ function animateSignal(now) {
   const dt = lastSignalTime ? Math.min((now - lastSignalTime) / 1000, .05) : 1 / 60;
   lastSignalTime = now;
   const delta = targetRevealY - displayedRevealY;
-  if (Math.abs(delta) < .6) {
+  const distance = Math.abs(delta);
+  if (distance >= .6) targetTailAlignment = delta > 0 ? 1 : 0;
+
+  // Pass the tail through the pulse when reversing, then resume normal tracking.
+  const turn = targetTailAlignment - tailAlignment;
+  tailAlignment = Math.abs(turn) < .02
+    ? targetTailAlignment
+    : tailAlignment + turn * (1 - Math.exp(-28 * dt));
+
+  if (distance < .6) {
     displayedRevealY = targetRevealY;
+  } else {
+    const turnSpeed = 1 - .4 * Math.abs(targetTailAlignment - tailAlignment);
+    const maxStep = 1900 * dt;
+    const softStep = distance * (1 - Math.exp(-12 * dt));
+    displayedRevealY += Math.sign(delta) * Math.min(distance, maxStep, softStep) * turnSpeed;
+  }
+  renderSignal(displayedRevealY);
+
+  if (displayedRevealY === targetRevealY && tailAlignment === targetTailAlignment) {
     signalFrame = 0;
     lastSignalTime = 0;
-    renderSignal(displayedRevealY);
-    return;
+  } else {
+    signalFrame = requestAnimationFrame(animateSignal);
   }
-  const distance = Math.abs(delta);
-  signalDirection = Math.sign(delta);
-  const maxStep = 1900 * dt;
-  const softStep = distance * (1 - Math.exp(-12 * dt));
-  displayedRevealY += Math.sign(delta) * Math.min(distance, maxStep, softStep);
-  renderSignal(displayedRevealY);
-  signalFrame = requestAnimationFrame(animateSignal);
 }
 
 function renderSignal(revealY) {
   const point = pointAtY(revealY);
   revealedLength = point.distance;
-  const tail = 48;
-  [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, signalDirection));
-  haloPath.style.opacity = revealedLength > 0 ? '' : '0';
+  const hasSignal = revealedLength > 1;
+  const tail = hasSignal ? 48 : 0;
+  [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, tailAlignment));
+  haloPath.style.opacity = hasSignal ? '' : '0';
   sections.slice(1).forEach((section, offset) => {
     const index = offset + 1;
     const reached = revealY >= anchorPoints[index].y;
@@ -276,7 +291,7 @@ function renderSignal(revealY) {
     branch.progress = Math.max(0, Math.min(1, (revealY - anchorPoints[branch.scene].y) / travel));
     const moving = branch.progress > 0 && branch.progress < 1;
     branch.active.classList.toggle('is-active', moving);
-    placeSignal(branch.active, branch.length, branch.length * branch.progress, Math.min(branch.length, 28), signalDirection);
+    placeSignal(branch.active, branch.length, branch.length * branch.progress, Math.min(branch.length, 28), tailAlignment);
     if (!moving) branch.active.style.opacity = '0';
     sections[branch.scene].classList.toggle('is-arrived', branch.progress >= .98);
   });
@@ -285,7 +300,6 @@ function renderSignal(revealY) {
   pulseHalo.setAttribute('cy', String(point.y));
   pulseCore.setAttribute('cx', String(point.x));
   pulseCore.setAttribute('cy', String(point.y));
-  const hasSignal = revealedLength > 1;
   pulseHalo.style.opacity = hasSignal ? '' : '0';
   pulseCore.style.opacity = hasSignal ? '1' : '0';
 
