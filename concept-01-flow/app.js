@@ -7,6 +7,8 @@ const activePath = document.querySelector('#thread-active');
 const activeGradient = document.querySelector('#active-gradient');
 const pulseHalo = document.querySelector('#pulse-halo');
 const pulseCore = document.querySelector('#pulse-core');
+const mobileSignal = document.querySelector('.mobile-signal');
+const mobileTail = mobileSignal.querySelector('.mobile-signal-tail');
 const branchGroup = document.querySelector('#thread-branches');
 const branchPulse = document.querySelector('#branch-pulse');
 const counter = document.querySelector('#counter-now');
@@ -20,6 +22,7 @@ const svgNamespace = 'http://www.w3.org/2000/svg';
 
 let pathLength = 0;
 let pathSamples = [];
+let mobileTextBounds = [];
 let viewportWidth = 0;
 let storyTop = 0;
 let storyHeight = 0;
@@ -112,6 +115,39 @@ function drawSignalTail(distance, tail) {
   haloPath.style.opacity = '';
 }
 
+function pointAtDistance(distance) {
+  const index = Math.min(pathSamples.length - 2, Math.floor(distance / pathLength * (pathSamples.length - 1)));
+  const first = pathSamples[index];
+  const next = pathSamples[index + 1];
+  const progress = (distance - first.distance) / (next.distance - first.distance);
+  return {
+    x: first.x + (next.x - first.x) * progress,
+    y: first.y + (next.y - first.y) * progress
+  };
+}
+
+function moveMobileSignal(point, tail) {
+  if (!tail) {
+    mobileSignal.style.opacity = '0';
+    return;
+  }
+
+  const start = pointAtDistance(Math.max(0, point.distance - tail * tailAlignment));
+  const end = pointAtDistance(Math.min(pathLength, point.distance + tail * (1 - tailAlignment)));
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const pointCovered = mobileTextBounds.some(rect =>
+    point.x - 7 < rect.right && point.x + 7 > rect.left && point.y - 7 < rect.bottom && point.y + 7 > rect.top);
+  const tailCovered = mobileTextBounds.some(rect =>
+    Math.min(start.x, end.x) - 3 < rect.right && Math.max(start.x, end.x) + 3 > rect.left
+    && Math.min(start.y, end.y) - 3 < rect.bottom && Math.max(start.y, end.y) + 3 > rect.top);
+
+  mobileSignal.style.transform = `translate3d(${point.x}px, ${point.y}px, 0)`;
+  mobileTail.style.transform = `translate(${start.x - point.x}px, ${start.y - point.y}px) rotate(${Math.atan2(dy, dx)}rad) scaleX(${Math.hypot(dx, dy) / tail})`;
+  mobileSignal.style.opacity = pointCovered ? '0' : '1';
+  mobileTail.style.opacity = tailCovered ? '0' : '1';
+}
+
 function updateThreadTextMask(storyRect, width, height) {
   function rectangle(x, y, rectWidth, rectHeight, fill) {
     const rect = document.createElementNS(svgNamespace, 'rect');
@@ -127,12 +163,17 @@ function updateThreadTextMask(storyRect, width, height) {
   const textBlocks = story.querySelectorAll('.scroll-hint, .story-intro > *, .chapter-copy > *, .journey-art > :not(.art-port), .finale h2, .finale-content > p, .finale-connection span');
   const range = document.createRange();
   const padding = 10;
+  mobileTextBounds = [];
   textBlocks.forEach(element => {
     range.selectNodeContents(element);
     for (const rect of range.getClientRects()) {
       if (!rect.width || !rect.height) continue;
-      cutouts.push(rectangle(rect.left - storyRect.left - padding, rect.top - storyRect.top - padding,
-        rect.width + 2 * padding, rect.height + 2 * padding, 'black'));
+      const left = rect.left - storyRect.left - padding;
+      const top = rect.top - storyRect.top - padding;
+      const width = rect.width + 2 * padding;
+      const height = rect.height + 2 * padding;
+      cutouts.push(rectangle(left, top, width, height, 'black'));
+      if (smallScreen.matches) mobileTextBounds.push({ left, top, right: left + width, bottom: top + height });
     }
   });
   threadTextMask.replaceChildren(...cutouts);
@@ -312,7 +353,8 @@ function renderSignal(revealY) {
   revealedLength = point.distance;
   const hasSignal = revealedLength > 1;
   const tail = hasSignal ? 48 : 0;
-  drawSignalTail(revealedLength, tail);
+  if (smallScreen.matches) moveMobileSignal(point, tail);
+  else drawSignalTail(revealedLength, tail);
   sections.slice(1).forEach((section, offset) => {
     const index = offset + 1;
     const reached = revealY >= anchorPoints[index].y;
@@ -333,12 +375,14 @@ function renderSignal(revealY) {
     sections[branch.scene].classList.toggle('is-arrived', branch.progress >= .98);
   });
 
-  pulseHalo.setAttribute('cx', String(point.x));
-  pulseHalo.setAttribute('cy', String(point.y));
-  pulseCore.setAttribute('cx', String(point.x));
-  pulseCore.setAttribute('cy', String(point.y));
-  pulseHalo.style.opacity = hasSignal ? '' : '0';
-  pulseCore.style.opacity = hasSignal ? '1' : '0';
+  if (!smallScreen.matches) {
+    pulseHalo.setAttribute('cx', String(point.x));
+    pulseHalo.setAttribute('cy', String(point.y));
+    pulseCore.setAttribute('cx', String(point.x));
+    pulseCore.setAttribute('cy', String(point.y));
+    pulseHalo.style.opacity = hasSignal ? '' : '0';
+    pulseCore.style.opacity = hasSignal ? '1' : '0';
+  }
 
   const travelling = branchData.find(branch => branch.progress > 0 && branch.progress < 1);
   if (travelling) {

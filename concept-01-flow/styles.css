@@ -279,9 +279,42 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
 .instagram-icon::before{content:"";width:8px;height:8px;border:2px solid currentColor;border-radius:50%}
 .instagram-icon::after{content:"";position:absolute;top:2px;right:2px;width:3px;height:3px;border-radius:50%;background:currentColor}
 @media(max-width:560px){.pricing-preview-grid{grid-template-columns:1fr;max-width:340px}}
-.mobile-card-point{display:none}
+.mobile-card-point,.mobile-signal{display:none}
 @media(max-width:760px){
-  .thread-halo,.thread-active,.pulse-halo,.pulse-core{filter:none}
+  .thread-halo,.thread-active,.pulse-halo,.pulse-core{display:none}
+  .mobile-signal {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:5;
+    opacity:0;
+    pointer-events:none;
+    will-change:transform;
+  }
+  .mobile-signal-tail {
+    position:absolute;
+    top:-1.25px;
+    left:0;
+    width:48px;
+    height:2.5px;
+    border-radius:999px;
+    background:#8231ea;
+    box-shadow:0 0 0 2px #a764fa1f;
+    transform-origin:0 center;
+    will-change:transform;
+  }
+  .mobile-signal-point {
+    position:absolute;
+    top:-7px;
+    left:-7px;
+    width:14px;
+    height:14px;
+    border:2.5px solid #8b38ed;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 0 5px #a764fa24;
+  }
   .chapter:has(.journey-art){min-height:0}
   .chapter .journey-art{width:calc(100% - 30px);height:auto;min-height:205px;margin-left:30px;padding:25px 28px}
   .mobile-card-point{display:block;position:absolute;top:var(--card-point-top);left:31px;opacity:.48}
