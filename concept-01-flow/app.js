@@ -325,7 +325,13 @@ function animateSignal(now) {
   lastSignalTime = now;
   const delta = targetRevealY - displayedRevealY;
   const distance = Math.abs(delta);
-  if (distance >= .6) targetTailAlignment = delta > 0 ? 1 : 0;
+  const nextAlignment = delta > 0 ? 1 : 0;
+  const reversing = nextAlignment !== targetTailAlignment;
+  // Ignore short reverse gestures, but still settle at the ends of the track.
+  const ignoreTurn = mobile && reversing && distance < 16;
+  const atTrackEnd = targetRevealY === pathSamples[0].y || targetRevealY === pathSamples.at(-1).y;
+  const holdPosition = ignoreTurn && !atTrackEnd;
+  if (distance >= .6 && !ignoreTurn) targetTailAlignment = nextAlignment;
 
   // Pass the tail through the pulse when reversing, then resume normal tracking.
   const turn = targetTailAlignment - tailAlignment;
@@ -335,7 +341,7 @@ function animateSignal(now) {
 
   if (distance < .6) {
     displayedRevealY = targetRevealY;
-  } else {
+  } else if (!holdPosition) {
     const turnSpeed = 1 - .4 * Math.abs(targetTailAlignment - tailAlignment);
     const speedLimit = mobile ? Math.max(1900, Math.min(9000, distance * 7)) : 1900;
     const maxStep = speedLimit * dt;
@@ -347,11 +353,12 @@ function animateSignal(now) {
     // A delayed frame should not skip a large stretch of the visible track.
     const crossesViewport = Math.max(displayedRevealY, nextY) >= visibleTop - 60
       && Math.min(displayedRevealY, nextY) <= visibleBottom + 60;
-    displayedRevealY += direction * (mobile && crossesViewport ? Math.min(step, 48) : step);
+    const visibleStepLimit = Math.min(28, 1800 * dt);
+    displayedRevealY += direction * (mobile && crossesViewport ? Math.min(step, visibleStepLimit) : step);
   }
   renderSignal(displayedRevealY);
 
-  if (displayedRevealY === targetRevealY && tailAlignment === targetTailAlignment) {
+  if ((displayedRevealY === targetRevealY || holdPosition) && tailAlignment === targetTailAlignment) {
     signalFrame = 0;
     lastSignalTime = 0;
   } else {
