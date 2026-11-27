@@ -4,6 +4,7 @@ const threadTextMask = document.querySelector('#thread-text-mask');
 const basePath = document.querySelector('#thread-base');
 const haloPath = document.querySelector('#thread-halo');
 const activePath = document.querySelector('#thread-active');
+const activeGradient = document.querySelector('#active-gradient');
 const pulseHalo = document.querySelector('#pulse-halo');
 const pulseCore = document.querySelector('#pulse-core');
 const branchGroup = document.querySelector('#thread-branches');
@@ -75,6 +76,40 @@ function pointAtY(targetY) {
     x: start.x + (end.x - start.x) * progress,
     y: targetY
   };
+}
+
+function drawMobileTail(distance, tail) {
+  const start = Math.max(0, distance - tail * tailAlignment);
+  const end = Math.min(pathLength, distance + tail * (1 - tailAlignment));
+  if (start === end) {
+    activePath.style.opacity = '0';
+    haloPath.style.opacity = '0';
+    return;
+  }
+
+  const spacing = pathLength / (pathSamples.length - 1);
+  const firstIndex = Math.floor(start / spacing);
+  const lastIndex = Math.min(pathSamples.length - 1, Math.ceil(end / spacing));
+  const startSample = pathSamples[firstIndex];
+  const startNext = pathSamples[firstIndex + 1];
+  const endSample = pathSamples[lastIndex];
+  const endPrevious = pathSamples[lastIndex - 1];
+
+  function interpolate(first, second, length) {
+    const ratio = (length - first.distance) / (second.distance - first.distance);
+    return `${first.x + (second.x - first.x) * ratio} ${first.y + (second.y - first.y) * ratio}`;
+  }
+
+  let segment = `M ${interpolate(startSample, startNext, start)}`;
+  for (let index = firstIndex + 1; index < lastIndex; index += 1) {
+    const { x, y } = pathSamples[index];
+    segment += ` L ${x} ${y}`;
+  }
+  segment += ` L ${interpolate(endPrevious, endSample, end)}`;
+  activePath.setAttribute('d', segment);
+  haloPath.setAttribute('d', segment);
+  activePath.style.opacity = '1';
+  haloPath.style.opacity = '';
 }
 
 function updateThreadTextMask(storyRect, width, height) {
@@ -172,12 +207,28 @@ function measureThread() {
     route += ` C ${previous.x + swing * direction} ${previous.y + distance * .38}, ${next.x - swing * direction} ${next.y - distance * .38}, ${next.x} ${next.y}`;
   }
 
-  [basePath, haloPath, activePath].forEach(path => path.setAttribute('d', route));
-  pathLength = activePath.getTotalLength();
-  pathSamples = samplePath(activePath);
-  [haloPath, activePath].forEach(path => {
-    path.style.strokeDasharray = `0 ${pathLength + 1}`;
-  });
+  basePath.setAttribute('d', route);
+  pathLength = basePath.getTotalLength();
+  pathSamples = samplePath(basePath);
+
+  if (smallScreen.matches) {
+    // Keep the colour tied to the whole route while drawing only the short tail.
+    activeGradient.setAttribute('gradientUnits', 'userSpaceOnUse');
+    activeGradient.setAttribute('y1', String(pathSamples[0].y));
+    activeGradient.setAttribute('y2', String(pathSamples.at(-1).y));
+    [haloPath, activePath].forEach(path => {
+      path.style.strokeDasharray = '';
+      path.style.strokeDashoffset = '';
+    });
+  } else {
+    activeGradient.removeAttribute('gradientUnits');
+    activeGradient.setAttribute('y1', '0');
+    activeGradient.setAttribute('y2', '1');
+    [haloPath, activePath].forEach(path => {
+      path.setAttribute('d', route);
+      path.style.strokeDasharray = `0 ${pathLength + 1}`;
+    });
+  }
 
   branchGroup.replaceChildren();
   const branchSections = smallScreen.matches ? [] : chapters;
@@ -239,7 +290,8 @@ function updateScroll() {
 }
 
 function animateSignal(now) {
-  const dt = lastSignalTime ? Math.min((now - lastSignalTime) / 1000, .05) : 1 / 60;
+  const mobile = smallScreen.matches;
+  const dt = lastSignalTime ? Math.min((now - lastSignalTime) / 1000, mobile ? .1 : .05) : 1 / 60;
   lastSignalTime = now;
   const delta = targetRevealY - displayedRevealY;
   const distance = Math.abs(delta);
@@ -255,7 +307,8 @@ function animateSignal(now) {
     displayedRevealY = targetRevealY;
   } else {
     const turnSpeed = 1 - .4 * Math.abs(targetTailAlignment - tailAlignment);
-    const maxStep = 1900 * dt;
+    const speedLimit = mobile ? Math.max(1900, Math.min(9000, distance * 7)) : 1900;
+    const maxStep = speedLimit * dt;
     const softStep = distance * (1 - Math.exp(-12 * dt));
     displayedRevealY += Math.sign(delta) * Math.min(distance, maxStep, softStep) * turnSpeed;
   }
@@ -274,8 +327,12 @@ function renderSignal(revealY) {
   revealedLength = point.distance;
   const hasSignal = revealedLength > 1;
   const tail = hasSignal ? 48 : 0;
-  [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, tailAlignment));
-  haloPath.style.opacity = hasSignal ? '' : '0';
+  if (smallScreen.matches) {
+    drawMobileTail(revealedLength, tail);
+  } else {
+    [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, tailAlignment));
+    haloPath.style.opacity = hasSignal ? '' : '0';
+  }
   sections.slice(1).forEach((section, offset) => {
     const index = offset + 1;
     const reached = revealY >= anchorPoints[index].y;
