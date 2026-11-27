@@ -18,10 +18,16 @@ const smallScreen = window.matchMedia('(max-width: 760px)');
 const svgNamespace = 'http://www.w3.org/2000/svg';
 
 let pathLength = 0;
+let pathSamples = [];
+let viewportWidth = 0;
+let storyTop = 0;
+let storyHeight = 0;
+let sceneTops = [];
+let endingTop = 0;
 let anchorPoints = [];
 let cardPoints = [];
 let revealedLength = 0;
-let currentScene = 0;
+let currentScene = -1;
 let branchData = [];
 let targetRevealY = 0;
 let displayedRevealY = 0;
@@ -38,16 +44,35 @@ function placeSignal(path, total, distance, tail, direction) {
   path.style.opacity = visible > 0 ? '1' : '0';
 }
 
-function lengthAtY(targetY) {
-  if (!pathLength) return 0;
+function samplePath(path) {
+  const count = Math.max(1, Math.ceil(pathLength / 6));
+  return Array.from({ length: count + 1 }, (_, index) => {
+    const distance = pathLength * index / count;
+    const { x, y } = path.getPointAtLength(distance);
+    return { distance, x, y };
+  });
+}
+
+function pointAtY(targetY) {
   let low = 0;
-  let high = pathLength;
-  for (let step = 0; step < 24; step += 1) {
-    const middle = (low + high) / 2;
-    if (activePath.getPointAtLength(middle).y < targetY) low = middle;
+  let high = pathSamples.length - 1;
+  if (targetY <= pathSamples[low].y) return pathSamples[low];
+  if (targetY >= pathSamples[high].y) return pathSamples[high];
+
+  while (high - low > 1) {
+    const middle = Math.floor((low + high) / 2);
+    if (pathSamples[middle].y < targetY) low = middle;
     else high = middle;
   }
-  return (low + high) / 2;
+
+  const start = pathSamples[low];
+  const end = pathSamples[high];
+  const progress = (targetY - start.y) / (end.y - start.y);
+  return {
+    distance: start.distance + (end.distance - start.distance) * progress,
+    x: start.x + (end.x - start.x) * progress,
+    y: targetY
+  };
 }
 
 function updateThreadTextMask(storyRect, width, height) {
@@ -83,6 +108,11 @@ function measureThread() {
   const storyRect = story.getBoundingClientRect();
   const width = story.clientWidth;
   const height = story.clientHeight;
+  viewportWidth = window.innerWidth;
+  storyTop = storyRect.top + window.scrollY;
+  storyHeight = height;
+  sceneTops = sections.map(section => section.getBoundingClientRect().top - storyRect.top);
+  endingTop = landingEnding.getBoundingClientRect().top - storyRect.top;
   if (smallScreen.matches) {
     chapters.forEach(section => {
       const card = section.querySelector('.chapter-art');
@@ -141,6 +171,7 @@ function measureThread() {
 
   [basePath, haloPath, activePath].forEach(path => path.setAttribute('d', route));
   pathLength = activePath.getTotalLength();
+  pathSamples = samplePath(activePath);
   [haloPath, activePath].forEach(path => {
     path.style.strokeDasharray = `0 ${pathLength + 1}`;
   });
@@ -174,27 +205,31 @@ function measureThread() {
 
 function updateScroll() {
   if (!pathLength) return;
-  const storyTop = story.getBoundingClientRect().top;
-  const revealOffset = window.innerHeight * .92;
+  const viewportHeight = window.innerHeight;
+  const scrollInStory = window.scrollY - storyTop;
+  const revealOffset = viewportHeight * .92;
   const mobileStartOffset = smallScreen.matches
-    ? Math.max(0, revealOffset - story.offsetTop - anchorPoints[0].y)
+    ? Math.max(0, revealOffset - storyTop - anchorPoints[0].y)
     : 0;
-  targetRevealY = revealOffset - storyTop - mobileStartOffset;
+  const firstY = pathSamples[0].y;
+  const lastY = pathSamples.at(-1).y;
+  targetRevealY = Math.min(lastY, Math.max(firstY, revealOffset + scrollInStory - mobileStartOffset));
 
-  let nextScene = 0;
-  sections.forEach((section, index) => {
-    if (section.getBoundingClientRect().top < window.innerHeight * .78) nextScene = index;
-  });
-  currentScene = nextScene;
-  sections.forEach((section, index) => section.classList.toggle('is-current', index === currentScene));
-  counter.textContent = String(currentScene).padStart(2, '0');
-  sceneCounter.hidden = landingEnding.getBoundingClientRect().top < window.innerHeight;
+  const nextScene = Math.max(0, sceneTops.findLastIndex(top => top < viewportHeight * .78 + scrollInStory));
+  if (nextScene !== currentScene) {
+    sections[currentScene]?.classList.remove('is-current');
+    currentScene = nextScene;
+    sections[currentScene].classList.add('is-current');
+    counter.textContent = String(currentScene).padStart(2, '0');
+  }
+  const endingVisible = endingTop < viewportHeight + scrollInStory;
+  if (sceneCounter.hidden !== endingVisible) sceneCounter.hidden = endingVisible;
 
   if (!signalInitialized) {
     displayedRevealY = targetRevealY;
     signalInitialized = true;
     renderSignal(displayedRevealY);
-  } else if (!signalFrame) {
+  } else if (!signalFrame && displayedRevealY !== targetRevealY) {
     lastSignalTime = 0;
     signalFrame = requestAnimationFrame(animateSignal);
   }
@@ -221,7 +256,8 @@ function animateSignal(now) {
 }
 
 function renderSignal(revealY) {
-  revealedLength = Math.max(0, Math.min(pathLength, lengthAtY(revealY)));
+  const point = pointAtY(revealY);
+  revealedLength = point.distance;
   const tail = 48;
   [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, signalDirection));
   haloPath.style.opacity = revealedLength > 0 ? '' : '0';
@@ -245,7 +281,6 @@ function renderSignal(revealY) {
     sections[branch.scene].classList.toggle('is-arrived', branch.progress >= .98);
   });
 
-  const point = activePath.getPointAtLength(revealedLength);
   pulseHalo.setAttribute('cx', String(point.x));
   pulseHalo.setAttribute('cy', String(point.y));
   pulseCore.setAttribute('cx', String(point.x));
@@ -281,7 +316,17 @@ if ('IntersectionObserver' in window) {
 }
 
 window.addEventListener('scroll', updateScroll, { passive: true });
-window.addEventListener('resize', measureThread);
+window.addEventListener('resize', () => {
+  // Mobile browser controls can resize the viewport throughout a scroll.
+  if (smallScreen.matches && window.innerWidth === viewportWidth) updateScroll();
+  else measureThread();
+});
+if ('ResizeObserver' in window) {
+  const observer = new ResizeObserver(() => {
+    if (story.clientHeight !== storyHeight) measureThread();
+  });
+  observer.observe(story);
+}
 if (document.readyState !== 'complete') window.addEventListener('load', measureThread, { once: true });
 document.fonts?.ready.then(measureThread);
 measureThread();

@@ -281,6 +281,7 @@ h1,h2,p{word-break:keep-all}.hero h1{font-size:clamp(44px,5.25vw,78px);letter-sp
 @media(max-width:560px){.pricing-preview-grid{grid-template-columns:1fr;max-width:340px}}
 .mobile-card-point{display:none}
 @media(max-width:760px){
+  .thread-halo,.thread-active,.pulse-halo,.pulse-core{filter:none}
   .chapter:has(.journey-art){min-height:0}
   .chapter .journey-art{width:calc(100% - 30px);height:auto;min-height:205px;margin-left:30px;padding:25px 28px}
   .mobile-card-point{display:block;position:absolute;top:var(--card-point-top);left:31px;opacity:.48}
