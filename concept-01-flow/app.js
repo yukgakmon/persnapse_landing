@@ -34,6 +34,8 @@ let revealedLength = 0;
 let currentScene = -1;
 let branchData = [];
 let targetRevealY = 0;
+let visibleTop = 0;
+let visibleBottom = 0;
 let displayedRevealY = 0;
 let signalFrame = 0;
 let lastSignalTime = 0;
@@ -287,6 +289,8 @@ function updateScroll() {
   if (!pathLength) return;
   const viewportHeight = window.innerHeight;
   const scrollInStory = window.scrollY - storyTop;
+  visibleTop = scrollInStory;
+  visibleBottom = scrollInStory + viewportHeight;
   const revealOffset = viewportHeight * .92;
   const mobileStartOffset = smallScreen.matches
     ? Math.max(0, revealOffset - storyTop - anchorPoints[0].y)
@@ -336,7 +340,14 @@ function animateSignal(now) {
     const speedLimit = mobile ? Math.max(1900, Math.min(9000, distance * 7)) : 1900;
     const maxStep = speedLimit * dt;
     const softStep = distance * (1 - Math.exp(-12 * dt));
-    displayedRevealY += Math.sign(delta) * Math.min(distance, maxStep, softStep) * turnSpeed;
+    const direction = Math.sign(delta);
+    const step = Math.min(distance, maxStep, softStep) * turnSpeed;
+    const nextY = displayedRevealY + direction * step;
+
+    // A delayed frame should not skip a large stretch of the visible track.
+    const crossesViewport = Math.max(displayedRevealY, nextY) >= visibleTop - 60
+      && Math.min(displayedRevealY, nextY) <= visibleBottom + 60;
+    displayedRevealY += direction * (mobile && crossesViewport ? Math.min(step, 48) : step);
   }
   renderSignal(displayedRevealY);
 
