@@ -78,7 +78,7 @@ function pointAtY(targetY) {
   };
 }
 
-function drawMobileTail(distance, tail) {
+function drawSignalTail(distance, tail) {
   const start = Math.max(0, distance - tail * tailAlignment);
   const end = Math.min(pathLength, distance + tail * (1 - tailAlignment));
   if (start === end) {
@@ -211,24 +211,9 @@ function measureThread() {
   pathLength = basePath.getTotalLength();
   pathSamples = samplePath(basePath);
 
-  if (smallScreen.matches) {
-    // Keep the colour tied to the whole route while drawing only the short tail.
-    activeGradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-    activeGradient.setAttribute('y1', String(pathSamples[0].y));
-    activeGradient.setAttribute('y2', String(pathSamples.at(-1).y));
-    [haloPath, activePath].forEach(path => {
-      path.style.strokeDasharray = '';
-      path.style.strokeDashoffset = '';
-    });
-  } else {
-    activeGradient.removeAttribute('gradientUnits');
-    activeGradient.setAttribute('y1', '0');
-    activeGradient.setAttribute('y2', '1');
-    [haloPath, activePath].forEach(path => {
-      path.setAttribute('d', route);
-      path.style.strokeDasharray = `0 ${pathLength + 1}`;
-    });
-  }
+  // Keep the gradient fixed to the full route as the short tail moves.
+  activeGradient.setAttribute('y1', String(pathSamples[0].y));
+  activeGradient.setAttribute('y2', String(pathSamples.at(-1).y));
 
   branchGroup.replaceChildren();
   const branchSections = smallScreen.matches ? [] : chapters;
@@ -327,12 +312,7 @@ function renderSignal(revealY) {
   revealedLength = point.distance;
   const hasSignal = revealedLength > 1;
   const tail = hasSignal ? 48 : 0;
-  if (smallScreen.matches) {
-    drawMobileTail(revealedLength, tail);
-  } else {
-    [haloPath, activePath].forEach(path => placeSignal(path, pathLength, revealedLength, tail, tailAlignment));
-    haloPath.style.opacity = hasSignal ? '' : '0';
-  }
+  drawSignalTail(revealedLength, tail);
   sections.slice(1).forEach((section, offset) => {
     const index = offset + 1;
     const reached = revealY >= anchorPoints[index].y;

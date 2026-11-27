@@ -23,7 +23,7 @@
     }
   </script>
   <link rel="stylesheet" href="./concept-01-flow/styles.css?v=mobile-scroll">
-  <script src="./concept-01-flow/app.js?v=mobile-flick" defer></script>
+  <script src="./concept-01-flow/app.js?v=short-signal-path" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -40,7 +40,7 @@
     <svg class="thread" id="thread" aria-hidden="true" preserveAspectRatio="none">
       <defs>
         <filter id="thread-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5"/></filter>
-        <linearGradient id="active-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b86aff"/><stop offset=".55" stop-color="#7223e9"/><stop offset="1" stop-color="#35b4c6"/></linearGradient>
+        <linearGradient id="active-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b86aff"/><stop offset=".55" stop-color="#7223e9"/><stop offset="1" stop-color="#35b4c6"/></linearGradient>
         <mask id="thread-text-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse"></mask>
       </defs>
       <g mask="url(#thread-text-mask)">
