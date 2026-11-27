@@ -129,6 +129,7 @@ function pointAtDistance(distance) {
 }
 
 function moveMobileSignal(point, tail) {
+  mobileSignal.style.transform = `translate3d(${point.x}px, ${point.y}px, 0)`;
   if (!tail) {
     mobileSignal.style.opacity = '0';
     return;
@@ -144,10 +145,10 @@ function moveMobileSignal(point, tail) {
     Math.min(start.x, end.x) - 3 < rect.right && Math.max(start.x, end.x) + 3 > rect.left
     && Math.min(start.y, end.y) - 3 < rect.bottom && Math.max(start.y, end.y) + 3 > rect.top);
 
-  mobileSignal.style.transform = `translate3d(${point.x}px, ${point.y}px, 0)`;
   mobileTail.style.transform = `translate(${start.x - point.x}px, ${start.y - point.y}px) rotate(${Math.atan2(dy, dx)}rad) scaleX(${Math.hypot(dx, dy) / tail})`;
   mobileSignal.style.opacity = pointCovered ? '0' : '1';
-  mobileTail.style.opacity = tailCovered ? '0' : '1';
+  const atDestination = pathLength - point.distance <= 1;
+  mobileTail.style.opacity = atDestination || tailCovered ? '0' : '1';
 }
 
 function updateThreadTextMask(storyRect, width, height) {
