@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://persnapse-drab.vercel.app/sitemap.xml
+Sitemap: https://landing.persnapse.com/sitemap.xml
