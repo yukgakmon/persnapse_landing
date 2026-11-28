@@ -75,7 +75,6 @@ h3 { font-size: 1.25rem; line-height: 1.35; letter-spacing: -.035em; }
   background: radial-gradient(ellipse at 42% 38%, #fff 10%, #f3eaf7 68%, #ede1f4);
 }
 .hero-figure img { width: 100%; height: auto; display: block; }
-.hero-figure figcaption { color: var(--muted); font-size: .875rem; text-align: center; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 27px; }
 .button {
   display: inline-flex;
@@ -99,12 +98,12 @@ h3 { font-size: 1.25rem; line-height: 1.35; letter-spacing: -.035em; }
 .section-heading { margin-bottom: 26px; }
 .proof-band { background: var(--pale); border-block: 1px solid var(--border); padding-block: clamp(35px, 6vw, 69px); }
 .split { display: grid; align-items: start; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); gap: 22px 60px; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; }
-.stats > div { display: flex; flex-direction: column-reverse; gap: 6px; padding: 8px 12px 8px 20px; border-left: 1px solid #d5c5e3; }
-.stats dt { color: var(--muted); font-size: .875rem; }
-.stats dd { margin: 0; color: var(--purple); font-size: clamp(1.7rem, 4vw, 3.3rem); font-weight: 850; line-height: 1.15; letter-spacing: -.06em; }
 .cards, .contact-layout { display: grid; gap: 16px; }
 .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.workflow { margin: 0; padding: 0; list-style: none; }
+.example-note { margin-top: 12px; color: var(--muted); font-size: .875rem; }
+.workflow .workflow-time { margin: 0 0 10px; color: var(--purple); font-size: .875rem; font-weight: 750; }
+.home-contact { margin-top: clamp(36px, 6vw, 72px); }
 .contact-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .card, .contact-card { padding: clamp(20px, 3.5vw, 34px); background: var(--paper); border: 1px solid var(--border); border-radius: 17px; }
 .card p, .contact-card p, .prose p, .feature-list p, .timeline p, .callout p { color: var(--muted); }
@@ -145,6 +144,5 @@ h3 { font-size: 1.25rem; line-height: 1.35; letter-spacing: -.035em; }
   .home-hero, .split, .cards, .contact-layout { grid-template-columns: 1fr; }
   .home-hero { gap: 32px; }
   .hero-figure { min-height: 0; border-radius: 19px; }
-  .stats > div { padding-inline: 10px 5px; }
   .feature-list article { grid-template-columns: 1fr; }
 }
